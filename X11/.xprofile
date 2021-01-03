@@ -31,7 +31,8 @@ for font in $(/bin/ls -d /usr/local/share/fonts/); do
     xset fp rehash
 done
 
-xset +fp /usr/local/share/fonts/tamsyn
+xset +fp /usr/local/share/fonts/tamsyn-font
+xset fp rehash
 
 # For some java apps
 
@@ -97,11 +98,11 @@ SXHKD_SHELL="/usr/local/bin/dash" run sxhkd
 
 # Run compositor
 
-run picom -b --config "$HOME"/.config/picom/picom.conf 
+run compton -b --config "$HOME"/.config/picom/picom.conf 
 
 # Restore the last wallpaper
 
-#"$HOME"/.fehbg 
+"$HOME"/.fehbg
 
 # Set cursor shape
 
@@ -197,7 +198,7 @@ fi
 
 # Start a scratchpad
 
-#alacritty --dimensions 55 15 --position 550 175 -t 'scratchpad' &
+# alacritty --dimensions 55 15 --position 550 175 -t 'scratchpad' &
 # sleep 1
 # urxvtc -T 'scratchpad' -geometry 75x20 
 #termite -t scratchpad
