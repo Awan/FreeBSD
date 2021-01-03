@@ -9,7 +9,7 @@
 
 source $HOME/.config/mutt/colorrc
 source $HOME/.config/mutt/gpgrc
-source ~/.config/mutt/aliases
+#source ~/.config/mutt/aliases
 
 
 
