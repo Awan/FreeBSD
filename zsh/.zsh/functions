@@ -368,7 +368,6 @@ gct()
 
 endot ()
 {
-  cd ~/cfg
   tar czf encrypted.tar.gz etc/.local/share/misc misc
   gpg -er 5CBC7BC7 encrypted.tar.gz
   rm encrypted.tar.gz
@@ -376,7 +375,6 @@ endot ()
 
 dedot ()
 {
-  cd ~/cfg
   gpg -do encrypted.tar.gz encrypted.tar.gz.gpg
   tar xvzf encrypted.tar.gz
   rm encrypted.tar.gz
