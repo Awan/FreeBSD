@@ -40,7 +40,9 @@ COLOR_SYS_BG="#333232"
 num_mon=$(bspc query -M | wc -l | tr -d ' ')
 PANEL_FIFO=/tmp/panel-fifo
 PANEL_HEIGHT=24
-PANEL_FONT="-*-tamsyn-bold-r-*-*-20-*-*-*-*-100-*-*"
+# PANEL_FONT="-*-tamsyn-bold-r-*-*-20-*-*-*-*-100-*-*"
+PANEL_FONT="-*-tamsyn-bold-r-*-*-20-*-100-100-*-100-iso8859-*"
+ICONS_FONT="-wuncon-siji-medium-r-normal--10-100-75-75-c-80-iso10646-1"
 PANEL_WM_NAME=bspwm_panel
 
 if xdo id -a "$PANEL_WM_NAME" > /dev/null ; then
@@ -59,27 +61,27 @@ datetime() {
 
 cpu() {
     cpu=$(ps -eo pcpu | awk 'BEGIN {sum=0.0f} {sum+=$1} END {print sum}')
-    temperature=$(sysctl -n hw.sensors.cpu0.temp0 | cut -d ' ' -f 1 )"\0260C"
-    if expr $cpu '>' 50 1>/dev/null; then
-        echo -n "%{F#FF0000}%{B#000000}"
-    elif expr $cpu '>' 40 1>/dev/null; then
-        echo -n "%{F#FFFF00}%{B#000000}"
-    else
-        echo -n "%{F#00FF00}%{B#000000}"
-    fi
+    temperature=$(sysctl -n dev.cpu.0.temperature )
+     if expr $cpu '>' 50 1>/dev/null; then
+         echo -n "%{F#FF0000}%{B#000000}"
+     elif expr $cpu '>' 40 1>/dev/null; then
+         echo -n "%{F#FFFF00}%{B#000000}"
+     else
+         echo -n "%{F#00FF00}%{B#000000}"
+     fi
     echo -n "CPU: $cpu %{F-}%{B-} %{B#000000}%{F#6675B8}$temperature "
 }
 
 wifi() {
-    wifi_state=$(ifconfig iwm0 | awk '/status:/ { print $2 }')
-    ssid=$(ifconfig iwm0 | awk '/(nwid|join)/ { print $3 }')
-    signals=$(ifconfig iwm0 | awk 'match($0, /[0-9]*%/) { print substr($0, RSTART, RLENGTH) }')
-    if [ $wifi_state = "active" ] ; then
+    wifi_state=$(ifconfig wlan0 | awk '/status:/ { print $2 }')
+    ssid=$(ifconfig wlan0 | awk '/ssid/ { print $2 }')
+#     signals=$(ifconfig wlan0 | awk 'match($0, /[0-9]*%/) { print substr($0, RSTART, RLENGTH) }')
+    if [ $wifi_state = "associated" ] ; then
         echo -n "%{F#94DFDB}%{B#000000}"
     else
         echo -n "%{F#FF0000}%{B#000000}"
     fi
-    echo -n "$ssid $signals %{F-}%{B-}"
+    echo -n "$ssid %{F-}%{B-}"
 }
 
 battery() {
@@ -102,8 +104,9 @@ battery() {
         echo -n "%{F#FF0000}%{B#000000}$battery_percentage%% %{F-}%{B-}"
     fi
 
-    unknown_status=$(apm -m)
-    [ "$unknown_status" != "unknown" ] && echo -n " [$unknown_status minutes remaining] "
+    unknown_status=$(apm -t)
+    time_in_minutes=$(("$unknown_status" / 60))
+    [ "$unknown_status" != "-1" ] && echo -n " [$time_in_minutes minutes remaining] "
 }
 
 brightness() {
@@ -153,7 +156,7 @@ all_info() {
         echo "B" "$(battery)"
         echo "G" "$(wifi)"
         echo "H" "$(datetime)"
-        echo "R" "$(brightness)"
+#         echo "R" "$(brightness)"
         echo "Y" "$(cpu)"
         echo "N" "$(mails)"
         echo "Z" "$(music)"
@@ -172,9 +175,9 @@ my_panel() {
             B*)
                 battery="${line#?}"
                 ;;
-            R*)
-                brightness="${line#?}"
-                ;;
+#             R*)
+#                 brightness="${line#?}"
+#                 ;;
             H*)
                 date="${line#?}"
                 ;;
@@ -292,7 +295,7 @@ my_panel() {
 done
 }
 
-my_panel < "$PANEL_FIFO" | lemonbar -a 32 -u 2 -n "$PANEL_WM_NAME" -g x$PANEL_HEIGHT -f "$PANEL_FONT" -F "$COLOR_DEFAULT_FG" -B "$COLOR_DEFAULT_BG" | sh &
+my_panel < "$PANEL_FIFO" | lemonbar -a 32 -u 2 -n "$PANEL_WM_NAME" -g x$PANEL_HEIGHT -f "$PANEL_FONT" -f "$ICONS_FONT" -F "$COLOR_DEFAULT_FG" -B "$COLOR_DEFAULT_BG" | sh &
 
 wid=$(xdo id -m -a "$PANEL_WM_NAME")
 xdo above -t "$(xdo id -N Bspwm -n root | sort | head -n 1)" "$wid"
