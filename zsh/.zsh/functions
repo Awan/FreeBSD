@@ -376,9 +376,9 @@ endot ()
 dedot ()
 {
   gpg -do encrypted.tar.gz encrypted.tar.gz.gpg
-  tar xvzf encrypted.tar.gz
+  tar xzf encrypted.tar.gz
   rm encrypted.tar.gz
-  stow etc
+  stow etc misc
 }
 
 sne ()

@@ -204,5 +204,8 @@ fi
 #termite -t scratchpad
 #xfce4-terminal -T scratchpad --font='Fantasque Sans Mono Italic 16'
 
+# Start xscreensaver
+run xscreensaver 
+
 # vim:ft=sh
 
